@@ -1,0 +1,52 @@
+{
+  "npmScope": "ngx-starter-kit",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e", "compodoc"]
+      }
+    }
+  },
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "newProjectRoot": "",
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "packageManager": "yarn",
+    "warnings": {
+      "versionMismatch": false
+    }
+  },
+  "generators": {
+    "@nrwl/angular:application": {
+      "e2eTestRunner": "cypress",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "prefix": "ngx",
+      "styleext": "scss"
+    },
+    "@nrwl/angular:directive": {
+      "prefix": "ngx"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "webapp"
+}
