@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "johnpapa.angular-essentials",
+    "DavidAnson.vscode-markdownlint",
+    "ms-azuretools.vscode-docker",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "humao.rest-client"
+  ]
+}

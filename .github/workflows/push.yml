@@ -1,0 +1,63 @@
+name: Test on Push for WebApp
+on: push
+jobs:
+  lint-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          # registry-url: <registry url>
+        id: node
+      - name: Setup Tools
+        run: |
+          # npm install -g lerna
+          npm install -g @angular/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Check out Code
+        uses: actions/checkout@v1
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@preview
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Lint
+        run: ng lint ngx-utils
+        # run: yarn affected:lint --all
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Unit Test
+        run: ng test ngx-utils
+        # run: yarn affected:test --all
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Integration Test
+      #   run: yarn affected:e2e --all
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
+          -F unittests
+          -n codecov-ngx
+          -f ./coverage/libs/ngx-utils/coverage-final.json
+          -B "${GITHUB_REF//refs\/heads\//}"
+          -T "${GITHUB_REF//refs\/tags\//}"
+          -C "${GITHUB_SHA}"
+          -Z || echo 'Codecov upload failed'
+        env:
+          CI: true
+          CODECOV_ENV: github-action
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_PR: ${{ github.event.after }}
+          CODECOV_SHA: ${{ github.sha }}
